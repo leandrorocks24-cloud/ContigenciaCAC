@@ -3,28 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAC - Registro de Contingência</title>
+    <title>Registro de Contingência - CAC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        .loader { border: 3px solid #e5e7eb; border-top: 3px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: none; }
+        .loader { border: 3px solid transparent; border-top: 3px solid white; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Simula a seleção azul do texto da imagem */
+        .txt-selecionado { background-color: #3b82f6; color: white; padding: 0 4px; border-radius: 2px; display: inline-block; margin-bottom: 2px; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-    <!-- Topo / Cabeçalho -->
+    <!-- Cabeçalho -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
                 <span class="bg-red-600 text-white font-black px-2.5 py-1 rounded text-sm tracking-wider">CAC</span>
-                <h1 class="text-lg font-bold text-slate-900">Registro de Contingência</h1>
+                <h1 class="text-lg font-bold text-slate-900">Operação em Contingência</h1>
             </div>
 
             <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-md">
                     <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Operador:</span>
-                    <input type="text" id="operador" placeholder="Seu Nome..." class="bg-transparent text-sm font-bold text-blue-700 outline-none w-36">
+                    <input type="text" id="operador" placeholder="Seu Nome..." class="bg-transparent text-sm font-bold text-[#005c9a] outline-none w-36">
                 </div>
                 <button onclick="toggleConfigModal()" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-md" title="Configurações GitHub">
                     ⚙️
@@ -33,73 +35,44 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+    <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
 
-        <!-- Formulário de Registro -->
-        <section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div class="flex items-center justify-between border-b pb-3 mb-5">
-                <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                    <span>📝</span> Nova Venda Manual
-                </h2>
-                <span class="text-xs text-slate-400">Preencha todos os dados com atenção</span>
+        <!-- Card Principal: IDÊNTICO À IMAGEM -->
+        <section class="bg-white rounded-lg shadow-md border border-slate-200 max-w-3xl mx-auto overflow-hidden">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100">
+                <h2 class="text-xl font-normal text-slate-800">Registro de Venda - Contingência</h2>
             </div>
-
-            <form id="formVenda" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Transportadora</label>
-                        <input type="text" id="transportadora" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 capitalize" required>
+            
+            <div class="p-6">
+                <!-- Caixa de Instruções com Barra Lateral -->
+                <div class="bg-[#f8f9fa] border-l-[3px] border-[#005c9a] p-5 mb-5 text-[14px] text-slate-700 rounded-r-md">
+                    <p class="mb-4">Para darmos continuidade ao registro da venda, por gentileza, preencha as informações corretamente, seguindo exatamente o padrão abaixo e informando todos os dados por escrito, sem abreviações ou informações agrupadas. <strong>Modelo de preenchimento:</strong></p>
+                    
+                    <div class="bg-white p-4 border border-dashed border-slate-300 mb-4 font-mono text-[13px] leading-relaxed overflow-x-auto">
+                        <span class="txt-selecionado">Transportadora:</span><br>
+                        <span class="txt-selecionado">Placa do veículo:</span><br>
+                        <span class="txt-selecionado">Nome completo do motorista:</span><br>
+                        <span class="txt-selecionado">Valor total:</span><br>
+                        <span class="txt-selecionado">Tipo de combustível:</span><br>
+                        <span class="txt-selecionado">Litragem abastecida:</span><br>
+                        <span class="txt-selecionado">Quilometragem do motorista:</span><br>
+                        <span class="txt-selecionado">CNPJ do estabelecimento:</span><br>
+                        <span class="txt-selecionado">Contato para envio do comprovante:</span>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Placa do Veículo</label>
-                        <input type="text" id="placa" maxlength="8" placeholder="ABC1D23" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 uppercase" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nome do Motorista</label>
-                        <input type="text" id="motorista" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 capitalize" required>
-                    </div>
+                    
+                    <p>Após o envio das informações completas e no formato acima, daremos sequência ao atendimento.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Valor Total (R$)</label>
-                        <input type="text" id="valor" placeholder="0,00" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 font-semibold" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Combustível</label>
-                        <input type="text" id="combustivel" placeholder="Ex: DIESEL S10" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 uppercase">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Litragem</label>
-                        <input type="text" id="litragem" placeholder="0,000" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Quilometragem (KM)</label>
-                        <input type="text" id="km" placeholder="0" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">CNPJ do Posto</label>
-                        <input type="text" id="cnpj" maxlength="18" placeholder="00.000.000/0000-00" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Contato p/ Envio (WhatsApp)</label>
-                        <input type="text" id="contato" maxlength="15" placeholder="(00) 00000-0000" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-
-                <div class="pt-3 flex items-center justify-between">
-                    <span id="statusEnvio" class="text-sm font-semibold hidden"></span>
-                    <div class="flex items-center gap-3 ml-auto">
-                        <div id="loaderEnvio" class="loader"></div>
-                        <button type="submit" id="btnSalvar" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-2.5 rounded shadow transition">
-                            Gravar Registro
-                        </button>
-                    </div>
-                </div>
-            </form>
+                <!-- Área de Colar -->
+                <textarea id="textoTemplate" rows="10" placeholder="Cole os dados aqui seguindo o modelo acima..." class="w-full border border-slate-300 rounded p-4 text-sm focus:outline-none focus:border-[#005c9a] focus:ring-1 focus:ring-[#005c9a] mb-5 font-mono text-slate-700 shadow-inner"></textarea>
+                
+                <!-- Botão Salvar -->
+                <button id="btnSalvar" class="w-full bg-[#005c9a] hover:bg-[#004777] text-white font-semibold py-3 px-4 rounded transition flex justify-center items-center gap-2">
+                    <div id="loaderEnvio" class="loader"></div>
+                    <span>Salvar Registro</span>
+                </button>
+                <div id="statusEnvio" class="mt-3 text-center text-sm font-semibold hidden"></div>
+            </div>
         </section>
 
         <!-- Painel de Registros -->
@@ -107,13 +80,13 @@
             <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-3">
                 <div class="flex items-center gap-3">
                     <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                        <span>📊</span> Registros em Contingência
+                        <span>📊</span> Registros Salvos
                     </h2>
                     <span id="contadorRegistros" class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0 vendas</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="carregarVendas()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded transition flex items-center gap-1.5">
-                        🔄 Atualizar Lista
+                        🔄 Atualizar Tabela
                     </button>
                     <button onclick="exportarExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded transition flex items-center gap-1.5">
                         📥 Baixar Planilha (.xlsx)
@@ -123,7 +96,7 @@
 
             <!-- Tabela de Dados -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600">
+                <table class="w-full text-left text-xs text-slate-600 whitespace-nowrap">
                     <thead class="bg-slate-50 uppercase text-slate-500 font-bold border-b">
                         <tr>
                             <th class="py-3 px-3">Status</th>
@@ -137,12 +110,11 @@
                             <th class="py-3 px-3">KM</th>
                             <th class="py-3 px-3">CNPJ</th>
                             <th class="py-3 px-3">Data/Hora</th>
-                            <th class="py-3 px-3 text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaCorpo" class="divide-y divide-slate-100">
                         <tr>
-                            <td colspan="12" class="py-8 text-center text-slate-400">Clique em "Atualizar Lista" para carregar as vendas salvas.</td>
+                            <td colspan="11" class="py-8 text-center text-slate-400">Clique em "Atualizar Tabela" para carregar as vendas salvas.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -153,36 +125,33 @@
     <!-- Modal de Configuração do Repositório -->
     <div id="modalConfig" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
-            <h3 class="text-base font-bold text-slate-900">Configuração do GitHub (Armazenamento)</h3>
-            <p class="text-xs text-slate-500">Essas credenciais ficam salvas apenas no navegador e permitem que o sistema leia e grave arquivos na pasta <code class="bg-slate-100 px-1 rounded">/vendas/</code> do seu repositório.</p>
+            <h3 class="text-base font-bold text-slate-900">Configuração do GitHub</h3>
+            <p class="text-xs text-slate-500">Credenciais para leitura e escrita na pasta <code class="bg-slate-100 px-1 rounded">/vendas/</code>.</p>
             
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Dono / Organização</label>
-                    <input type="text" id="cfgOwner" placeholder="Ex: seu-usuario" class="w-full p-2 text-sm border rounded">
+                    <input type="text" id="cfgOwner" class="w-full p-2 text-sm border rounded">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Repositório</label>
-                    <input type="text" id="cfgRepo" placeholder="Ex: contingencia-vendas" class="w-full p-2 text-sm border rounded">
+                    <input type="text" id="cfgRepo" class="w-full p-2 text-sm border rounded">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">GitHub Personal Access Token (PAT)</label>
-                    <input type="password" id="cfgToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full p-2 text-sm border rounded">
-                    <span class="text-[10px] text-slate-400">Token com permissão de leitura e escrita em "Contents" deste repositório.</span>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">GitHub Token (PAT)</label>
+                    <input type="password" id="cfgToken" class="w-full p-2 text-sm border rounded">
                 </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="toggleConfigModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded">Cancelar</button>
-                <button onclick="salvarConfiguracoes()" class="px-4 py-2 text-xs font-bold bg-blue-600 text-white rounded hover:bg-blue-700">Salvar Dados</button>
+                <button onclick="salvarConfiguracoes()" class="px-4 py-2 text-xs font-bold bg-[#005c9a] text-white rounded hover:bg-[#004777]">Salvar Dados</button>
             </div>
         </div>
     </div>
 
     <script>
-        // =================================================================
-        // CONFIGURAÇÕES PADRÃO (Pode pré-configurar aqui ou preencher no modal)
-        // =================================================================
+        // CONFIGURAÇÕES PADRÃO (Opcional: preencha para não pedir no primeiro acesso)
         const DEFAULT_OWNER = ""; 
         const DEFAULT_REPO = ""; 
         const DEFAULT_TOKEN = ""; 
@@ -195,19 +164,237 @@
             op.value = localStorage.getItem('op_nome') || '';
             op.addEventListener('input', (e) => localStorage.setItem('op_nome', e.target.value));
 
-            // Carrega credenciais do LocalStorage ou constantes
             if (!localStorage.getItem('gh_owner') && DEFAULT_OWNER) localStorage.setItem('gh_owner', DEFAULT_OWNER);
             if (!localStorage.getItem('gh_repo') && DEFAULT_REPO) localStorage.setItem('gh_repo', DEFAULT_REPO);
             if (!localStorage.getItem('gh_token') && DEFAULT_TOKEN) localStorage.setItem('gh_token', DEFAULT_TOKEN);
 
-            if (localStorage.getItem('gh_token')) {
-                carregarVendas();
-            } else {
-                toggleConfigModal();
+            if (localStorage.getItem('gh_token')) { carregarVendas(); } 
+            else { toggleConfigModal(); }
+        });
+
+        // =================================================================
+        // EXTRATOR INTELIGENTE (Lê o texto colado)
+        // =================================================================
+        function extrairDadosDoTexto(texto) {
+            // Função auxiliar que busca uma chave e captura o resto da linha
+            const extrair = (chave) => {
+                const regex = new RegExp(chave.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\\s*:\\s*(.*)", "i");
+                const match = texto.match(regex);
+                return match ? match[1].trim() : "";
+            };
+
+            return {
+                transportadora: extrair("Transportadora"),
+                placa: extrair("Placa do veículo"),
+                motorista: extrair("Nome completo do motorista"),
+                valor: extrair("Valor total"),
+                combustivel: extrair("Tipo de combustível"),
+                litragem: extrair("Litragem abastecida"),
+                km: extrair("Quilometragem do motorista"),
+                cnpj: extrair("CNPJ do estabelecimento"),
+                contato: extrair("Contato para envio do comprovante")
+            };
+        }
+
+        // =================================================================
+        // FORMATADORES DE DADOS (Limpa e padroniza antes de salvar)
+        // =================================================================
+        function formatTitleCase(str) { return (str || '').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase()); }
+        
+        function formatarValor(v) {
+            if (!v) return "0,00";
+            let nums = v.replace(/[^\d,.-]/g, ''); // Remove R$ e letras
+            if (nums.includes(',')) nums = nums.replace(/\./g, '').replace(',', '.'); // Ajusta para float
+            let val = parseFloat(nums);
+            return isNaN(val) ? v : val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatarNum(v) {
+            if (!v) return "";
+            let nums = v.replace(/\D/g, '');
+            return nums ? parseInt(nums).toLocaleString('pt-BR') : "";
+        }
+
+        function formatarLitragem(v) {
+            if (!v) return "0,000";
+            let nums = v.replace(/[^\d,.-]/g, '');
+            if (nums.includes(',')) nums = nums.replace(/\./g, '').replace(',', '.');
+            let val = parseFloat(nums);
+            return isNaN(val) ? v : val.toLocaleString('pt-BR', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+        }
+
+        function formatarCNPJ(v) {
+            let val = v.replace(/\D/g, "");
+            if (val.length >= 14) {
+                val = val.slice(0, 14);
+                return val.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+            }
+            return v;
+        }
+
+        // =================================================================
+        // SALVAR NO GITHUB
+        // =================================================================
+        document.getElementById('btnSalvar').addEventListener('click', async () => {
+            const rawText = document.getElementById('textoTemplate').value.trim();
+            const operador = document.getElementById('operador').value.trim();
+            const statusBox = document.getElementById('statusEnvio');
+            const btn = document.getElementById('btnSalvar');
+            const loader = document.getElementById('loaderEnvio');
+
+            if (!operador) {
+                alert("Preencha seu nome de operador no topo da página.");
+                document.getElementById('operador').focus();
+                return;
+            }
+            if (!rawText) {
+                alert("Cole os dados no campo de texto primeiro.");
+                return;
+            }
+
+            // Extrai as linhas do texto colado
+            const dadosBrutos = extrairDadosDoTexto(rawText);
+            
+            if (!dadosBrutos.placa) {
+                alert("Não foi possível encontrar a 'Placa do veículo' no texto colado. Verifique o formato.");
+                return;
+            }
+
+            // Formata todos os campos automaticamente
+            const placaLimpa = dadosBrutos.placa.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const timestamp = Date.now();
+            const filename = `vendas/${timestamp}_${placaLimpa}.json`;
+
+            const dadosVenda = {
+                id: timestamp,
+                status: "Pendente",
+                operador: formatTitleCase(operador),
+                transportadora: formatTitleCase(dadosBrutos.transportadora),
+                placa: placaLimpa,
+                motorista: formatTitleCase(dadosBrutos.motorista),
+                valor: formatarValor(dadosBrutos.valor),
+                combustivel: dadosBrutos.combustivel.toUpperCase(),
+                litragem: formatarLitragem(dadosBrutos.litragem),
+                km: formatarNum(dadosBrutos.km),
+                cnpj: formatarCNPJ(dadosBrutos.cnpj),
+                contato: dadosBrutos.contato,
+                dataHora: new Date().toLocaleString('pt-BR')
+            };
+
+            // Inicia Salvamento
+            btn.disabled = true;
+            btn.classList.add('opacity-80');
+            loader.style.display = 'block';
+            statusBox.className = 'hidden';
+
+            try {
+                const owner = localStorage.getItem('gh_owner');
+                const repo = localStorage.getItem('gh_repo');
+                const token = localStorage.getItem('gh_token');
+
+                const jsonString = JSON.stringify(dadosVenda, null, 2);
+                const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filename}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Venda contingencia ${placaLimpa}`, content: base64Content })
+                });
+
+                if (!res.ok) throw new Error('Falha ao gravar no GitHub (Verifique o Token)');
+
+                statusBox.textContent = "✅ Gravado com sucesso!";
+                statusBox.className = "mt-3 text-center text-sm font-bold text-emerald-600 block";
+                document.getElementById('textoTemplate').value = ''; // Limpa o textarea
+                carregarVendas(); // Atualiza a tabela abaixo
+
+            } catch (err) {
+                statusBox.textContent = "❌ Erro ao salvar: " + err.message;
+                statusBox.className = "mt-3 text-center text-sm font-bold text-rose-600 block";
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-80');
+                loader.style.display = 'none';
+                setTimeout(() => { statusBox.className = 'hidden'; }, 4000);
             }
         });
 
-        // Configurações GitHub
+        // =================================================================
+        // CONSULTA E TABELA
+        // =================================================================
+        async function carregarVendas() {
+            const owner = localStorage.getItem('gh_owner');
+            const repo = localStorage.getItem('gh_repo');
+            const token = localStorage.getItem('gh_token');
+            const tbody = document.getElementById('tabelaCorpo');
+
+            if (!owner || !repo || !token) return;
+            tbody.innerHTML = `<tr><td colspan="11" class="py-6 text-center text-slate-500">Consultando registros...</td></tr>`;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/vendas`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+
+                if (res.status === 404) {
+                    tbody.innerHTML = `<tr><td colspan="11" class="py-6 text-center text-slate-400">Nenhuma venda registrada ainda.</td></tr>`;
+                    document.getElementById('contadorRegistros').textContent = `0 vendas`;
+                    return;
+                }
+
+                const files = await res.json();
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+
+                const promises = jsonFiles.map(async file => {
+                    const r = await fetch(file.download_url);
+                    return await r.json();
+                });
+
+                vendasCarregadas = await Promise.all(promises);
+                vendasCarregadas.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+                document.getElementById('contadorRegistros').textContent = `${vendasCarregadas.length} vendas`;
+                renderTabela(vendasCarregadas);
+
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="11" class="py-6 text-center text-rose-500">Erro ao carregar: ${err.message}</td></tr>`;
+            }
+        }
+
+        function getCorOperador(nome) {
+            let hash = 0;
+            for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+            let cor = '#';
+            for (let i = 0; i < 3; i++) {
+                let val = (hash >> (i * 8)) & 0xFF;
+                cor += ('00' + Math.max(0, Math.min(val, 170)).toString(16)).substr(-2);
+            }
+            return cor;
+        }
+
+        function renderTabela(lista) {
+            const tbody = document.getElementById('tabelaCorpo');
+            if (lista.length === 0) return;
+            tbody.innerHTML = lista.map(v => `
+                <tr class="hover:bg-slate-50 transition border-b">
+                    <td class="py-3 px-3"><span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-1 rounded">${v.status}</span></td>
+                    <td class="py-3 px-3 font-semibold" style="color: ${getCorOperador(v.operador)}">${v.operador}</td>
+                    <td class="py-3 px-3">${v.transportadora}</td>
+                    <td class="py-3 px-3 font-mono font-bold text-slate-800">${v.placa}</td>
+                    <td class="py-3 px-3">${v.motorista}</td>
+                    <td class="py-3 px-3 font-bold text-slate-900">R$ ${v.valor}</td>
+                    <td class="py-3 px-3">${v.combustivel}</td>
+                    <td class="py-3 px-3">${v.litragem}</td>
+                    <td class="py-3 px-3">${v.km}</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">${v.cnpj}</td>
+                    <td class="py-3 px-3 text-slate-400 text-[11px]">${v.dataHora}</td>
+                </tr>
+            `).join('');
+        }
+
+        // =================================================================
+        // CONFIGURAÇÕES E EXPORTAÇÃO
+        // =================================================================
         function toggleConfigModal() {
             const modal = document.getElementById('modalConfig');
             modal.classList.toggle('hidden');
@@ -225,249 +412,8 @@
             carregarVendas();
         }
 
-        // =================================================================
-        // FORMATAÇÃO E MÁSCARAS
-        // =================================================================
-        function formatTitleCase(str) {
-            return (str || '').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-        }
-
-        function getCorOperador(nome) {
-            const fixas = { "Leandro Silveira": "#1155cc", "Mirian Santos": "#a64d79" };
-            if (fixas[nome]) return fixas[nome];
-            let hash = 0;
-            for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash);
-            let cor = '#';
-            for (let i = 0; i < 3; i++) {
-                let val = (hash >> (i * 8)) & 0xFF;
-                cor += ('00' + Math.max(0, Math.min(val, 170)).toString(16)).substr(-2);
-            }
-            return cor;
-        }
-
-        document.getElementById('valor').addEventListener('input', (e) => {
-            let v = e.target.value.replace(/\D/g, "");
-            e.target.value = v ? (parseInt(v) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
-        });
-
-        document.getElementById('km').addEventListener('input', (e) => {
-            let v = e.target.value.replace(/\D/g, "");
-            e.target.value = v ? parseInt(v).toLocaleString('pt-BR') : "";
-        });
-
-        document.getElementById('cnpj').addEventListener('input', (e) => {
-            let v = e.target.value.replace(/\D/g, "").slice(0, 14);
-            v = v.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
-            e.target.value = v;
-        });
-
-        document.getElementById('contato').addEventListener('input', (e) => {
-            let v = e.target.value.replace(/\D/g, "").slice(0, 11);
-            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-            else if (v.length > 5) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
-            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
-            e.target.value = v;
-        });
-
-        // =================================================================
-        // ENVIO PARA O GITHUB (API REST)
-        // =================================================================
-        document.getElementById('formVenda').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const owner = localStorage.getItem('gh_owner');
-            const repo = localStorage.getItem('gh_repo');
-            const token = localStorage.getItem('gh_token');
-            const operador = document.getElementById('operador').value.trim();
-
-            if (!owner || !repo || !token) {
-                alert("Configure o Dono, Repositório e Token no botão de engrenagem.");
-                toggleConfigModal();
-                return;
-            }
-
-            if (!operador) {
-                alert("Preencha seu nome de operador no topo da página antes de salvar.");
-                document.getElementById('operador').focus();
-                return;
-            }
-
-            const placaLimpa = document.getElementById('placa').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            const timestamp = Date.now();
-            const filename = `vendas/${timestamp}_${placaLimpa}.json`;
-
-            const dadosVenda = {
-                id: timestamp,
-                status: "Pendente",
-                operador: formatTitleCase(operador),
-                transportadora: formatTitleCase(document.getElementById('transportadora').value),
-                placa: document.getElementById('placa').value.toUpperCase().trim(),
-                motorista: formatTitleCase(document.getElementById('motorista').value),
-                valor: document.getElementById('valor').value,
-                combustivel: document.getElementById('combustivel').value.toUpperCase().trim(),
-                litragem: document.getElementById('litragem').value.trim(),
-                km: document.getElementById('km').value.trim(),
-                cnpj: document.getElementById('cnpj').value.trim(),
-                contato: document.getElementById('contato').value.trim(),
-                dataHora: new Date().toLocaleString('pt-BR')
-            };
-
-            const btn = document.getElementById('btnSalvar');
-            const loader = document.getElementById('loaderEnvio');
-            const status = document.getElementById('statusEnvio');
-
-            btn.disabled = true;
-            btn.classList.add('opacity-50');
-            loader.style.display = 'block';
-            status.className = 'hidden';
-
-            try {
-                // Converte payload para Base64 respeitando acentuação UTF-8
-                const jsonString = JSON.stringify(dadosVenda, null, 2);
-                const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
-
-                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filename}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Venda contingencia ${placaLimpa}`,
-                        content: base64Content
-                    })
-                });
-
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.message || 'Falha ao gravar no GitHub');
-                }
-
-                status.textContent = "Gravado com sucesso no GitHub!";
-                status.className = "text-sm font-semibold text-emerald-600 block";
-                document.getElementById('formVenda').reset();
-                carregarVendas();
-            } catch (err) {
-                status.textContent = "Erro ao salvar: " + err.message;
-                status.className = "text-sm font-semibold text-rose-600 block";
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('opacity-50');
-                loader.style.display = 'none';
-                setTimeout(() => { status.className = 'hidden'; }, 4000);
-            }
-        });
-
-        // =================================================================
-        // CONSULTA DE REGISTROS
-        // =================================================================
-        async function carregarVendas() {
-            const owner = localStorage.getItem('gh_owner');
-            const repo = localStorage.getItem('gh_repo');
-            const token = localStorage.getItem('gh_token');
-            const tbody = document.getElementById('tabelaCorpo');
-
-            if (!owner || !repo || !token) return;
-
-            tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-500">Consultando registros no GitHub...</td></tr>`;
-
-            try {
-                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/vendas`, {
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-
-                if (res.status === 404) {
-                    tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-400">Nenhuma venda registrada ainda.</td></tr>`;
-                    document.getElementById('contadorRegistros').textContent = `0 vendas`;
-                    return;
-                }
-
-                const files = await res.json();
-                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-
-                // Busca o conteúdo dos arquivos
-                const promises = jsonFiles.map(async file => {
-                    const r = await fetch(file.download_url);
-                    return await r.json();
-                });
-
-                vendasCarregadas = await Promise.all(promises);
-                vendasCarregadas.sort((a, b) => (b.id || 0) - (a.id || 0));
-
-                document.getElementById('contadorRegistros').textContent = `${vendasCarregadas.length} vendas`;
-                renderTabela(vendasCarregadas);
-
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-rose-500">Erro ao carregar dados: ${err.message}</td></tr>`;
-            }
-        }
-
-        function renderTabela(lista) {
-            const tbody = document.getElementById('tabelaCorpo');
-            if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = lista.map((v, idx) => {
-                const corOp = getCorOperador(v.operador);
-                return `
-                    <tr class="hover:bg-slate-50 transition border-b">
-                        <td class="py-2.5 px-3"><span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">${v.status}</span></td>
-                        <td class="py-2.5 px-3 font-semibold" style="color: ${corOp}">${v.operador}</td>
-                        <td class="py-2.5 px-3 font-medium">${v.transportadora}</td>
-                        <td class="py-2.5 px-3 font-mono font-bold text-slate-800">${v.placa}</td>
-                        <td class="py-2.5 px-3 text-center">${v.motorista}</td>
-                        <td class="py-2.5 px-3 font-bold text-slate-900">R$ ${v.valor}</td>
-                        <td class="py-2.5 px-3">${v.combustivel || '-'}</td>
-                        <td class="py-2.5 px-3">${v.litragem || '-'}</td>
-                        <td class="py-2.5 px-3">${v.km || '-'}</td>
-                        <td class="py-2.5 px-3 font-mono text-[11px]">${v.cnpj || '-'}</td>
-                        <td class="py-2.5 px-3 text-slate-400 text-[11px]">${v.dataHora}</td>
-                        <td class="py-2.5 px-3 text-center">
-                            <button onclick="copiarTemplate(${idx})" class="text-blue-600 hover:text-blue-800 font-bold text-[11px] bg-blue-50 px-2 py-1 rounded">
-                                Copiar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // =================================================================
-        // COPIAR TEMPLATE PADRÃO
-        // =================================================================
-        function copiarTemplate(idx) {
-            const v = vendasCarregadas[idx];
-            const texto = 
-`🚨 REGISTRO DE VENDA (CONTINGÊNCIA) 🚨
-Operador: ${v.operador}
-Transportadora: ${v.transportadora}
-Placa: ${v.placa}
-Motorista: ${v.motorista}
-Valor: R$ ${v.valor}
-Combustível: ${v.combustivel || 'N/A'}
-Litragem: ${v.litragem || 'N/A'}
-KM: ${v.km || 'N/A'}
-CNPJ Posto: ${v.cnpj || 'N/A'}
-Contato: ${v.contato || 'N/A'}
-Data/Hora: ${v.dataHora}`;
-
-            navigator.clipboard.writeText(texto).then(() => {
-                alert("Template da placa " + v.placa + " copiado com sucesso!");
-            });
-        }
-
-        // =================================================================
-        // EXPORTAÇÃO EXCEL (.XLSX)
-        // =================================================================
         function exportarExcel() {
-            if (vendasCarregadas.length === 0) {
-                alert("Não há dados carregados para exportar.");
-                return;
-            }
-
+            if (vendasCarregadas.length === 0) return alert("Não há dados carregados para exportar.");
             const rows = vendasCarregadas.map(v => ({
                 "Status": v.status,
                 "Operador": v.operador,
@@ -482,11 +428,9 @@ Data/Hora: ${v.dataHora}`;
                 "Contato p/ envio": v.contato,
                 "Data/Hora": v.dataHora
             }));
-
             const ws = XLSX.utils.json_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Registros");
-
             XLSX.writeFile(wb, `Contingencia_CAC_${new Date().toISOString().slice(0, 10)}.xlsx`);
         }
     </script>
