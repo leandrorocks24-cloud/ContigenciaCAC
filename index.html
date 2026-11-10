@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAC - Registro de Contingência</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        .loader { border: 3px solid #e5e7eb; border-top: 3px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+    <!-- Topo / Cabeçalho -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <span class="bg-red-600 text-white font-black px-2.5 py-1 rounded text-sm tracking-wider">CAC</span>
+                <h1 class="text-lg font-bold text-slate-900">Registro de Contingência</h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-md">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Operador:</span>
+                    <input type="text" id="operador" placeholder="Seu Nome..." class="bg-transparent text-sm font-bold text-blue-700 outline-none w-36">
+                </div>
+                <button onclick="toggleConfigModal()" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-md" title="Configurações GitHub">
+                    ⚙️
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Formulário de Registro -->
+        <section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center justify-between border-b pb-3 mb-5">
+                <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span>📝</span> Nova Venda Manual
+                </h2>
+                <span class="text-xs text-slate-400">Preencha todos os dados com atenção</span>
+            </div>
+
+            <form id="formVenda" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Transportadora</label>
+                        <input type="text" id="transportadora" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 capitalize" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Placa do Veículo</label>
+                        <input type="text" id="placa" maxlength="8" placeholder="ABC1D23" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 uppercase" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nome do Motorista</label>
+                        <input type="text" id="motorista" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 capitalize" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Valor Total (R$)</label>
+                        <input type="text" id="valor" placeholder="0,00" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 font-semibold" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Combustível</label>
+                        <input type="text" id="combustivel" placeholder="Ex: DIESEL S10" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500 uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Litragem</label>
+                        <input type="text" id="litragem" placeholder="0,000" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Quilometragem (KM)</label>
+                        <input type="text" id="km" placeholder="0" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">CNPJ do Posto</label>
+                        <input type="text" id="cnpj" maxlength="18" placeholder="00.000.000/0000-00" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Contato p/ Envio (WhatsApp)</label>
+                        <input type="text" id="contato" maxlength="15" placeholder="(00) 00000-0000" class="w-full p-2 text-sm border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="pt-3 flex items-center justify-between">
+                    <span id="statusEnvio" class="text-sm font-semibold hidden"></span>
+                    <div class="flex items-center gap-3 ml-auto">
+                        <div id="loaderEnvio" class="loader"></div>
+                        <button type="submit" id="btnSalvar" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-2.5 rounded shadow transition">
+                            Gravar Registro
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Painel de Registros -->
+        <section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-3">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span>📊</span> Registros em Contingência
+                    </h2>
+                    <span id="contadorRegistros" class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0 vendas</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="carregarVendas()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded transition flex items-center gap-1.5">
+                        🔄 Atualizar Lista
+                    </button>
+                    <button onclick="exportarExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded transition flex items-center gap-1.5">
+                        📥 Baixar Planilha (.xlsx)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabela de Dados -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50 uppercase text-slate-500 font-bold border-b">
+                        <tr>
+                            <th class="py-3 px-3">Status</th>
+                            <th class="py-3 px-3">Operador</th>
+                            <th class="py-3 px-3">Transp.</th>
+                            <th class="py-3 px-3">Placa</th>
+                            <th class="py-3 px-3">Motorista</th>
+                            <th class="py-3 px-3">Valor</th>
+                            <th class="py-3 px-3">Combustível</th>
+                            <th class="py-3 px-3">Litragem</th>
+                            <th class="py-3 px-3">KM</th>
+                            <th class="py-3 px-3">CNPJ</th>
+                            <th class="py-3 px-3">Data/Hora</th>
+                            <th class="py-3 px-3 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCorpo" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="12" class="py-8 text-center text-slate-400">Clique em "Atualizar Lista" para carregar as vendas salvas.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Configuração do Repositório -->
+    <div id="modalConfig" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-900">Configuração do GitHub (Armazenamento)</h3>
+            <p class="text-xs text-slate-500">Essas credenciais ficam salvas apenas no navegador e permitem que o sistema leia e grave arquivos na pasta <code class="bg-slate-100 px-1 rounded">/vendas/</code> do seu repositório.</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Dono / Organização</label>
+                    <input type="text" id="cfgOwner" placeholder="Ex: seu-usuario" class="w-full p-2 text-sm border rounded">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Repositório</label>
+                    <input type="text" id="cfgRepo" placeholder="Ex: contingencia-vendas" class="w-full p-2 text-sm border rounded">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="cfgToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full p-2 text-sm border rounded">
+                    <span class="text-[10px] text-slate-400">Token com permissão de leitura e escrita em "Contents" deste repositório.</span>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="toggleConfigModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded">Cancelar</button>
+                <button onclick="salvarConfiguracoes()" class="px-4 py-2 text-xs font-bold bg-blue-600 text-white rounded hover:bg-blue-700">Salvar Dados</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =================================================================
+        // CONFIGURAÇÕES PADRÃO (Pode pré-configurar aqui ou preencher no modal)
+        // =================================================================
+        const DEFAULT_OWNER = ""; 
+        const DEFAULT_REPO = ""; 
+        const DEFAULT_TOKEN = ""; 
+
+        let vendasCarregadas = [];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            const op = document.getElementById('operador');
+            op.value = localStorage.getItem('op_nome') || '';
+            op.addEventListener('input', (e) => localStorage.setItem('op_nome', e.target.value));
+
+            // Carrega credenciais do LocalStorage ou constantes
+            if (!localStorage.getItem('gh_owner') && DEFAULT_OWNER) localStorage.setItem('gh_owner', DEFAULT_OWNER);
+            if (!localStorage.getItem('gh_repo') && DEFAULT_REPO) localStorage.setItem('gh_repo', DEFAULT_REPO);
+            if (!localStorage.getItem('gh_token') && DEFAULT_TOKEN) localStorage.setItem('gh_token', DEFAULT_TOKEN);
+
+            if (localStorage.getItem('gh_token')) {
+                carregarVendas();
+            } else {
+                toggleConfigModal();
+            }
+        });
+
+        // Configurações GitHub
+        function toggleConfigModal() {
+            const modal = document.getElementById('modalConfig');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+            document.getElementById('cfgOwner').value = localStorage.getItem('gh_owner') || '';
+            document.getElementById('cfgRepo').value = localStorage.getItem('gh_repo') || '';
+            document.getElementById('cfgToken').value = localStorage.getItem('gh_token') || '';
+        }
+
+        function salvarConfiguracoes() {
+            localStorage.setItem('gh_owner', document.getElementById('cfgOwner').value.trim());
+            localStorage.setItem('gh_repo', document.getElementById('cfgRepo').value.trim());
+            localStorage.setItem('gh_token', document.getElementById('cfgToken').value.trim());
+            toggleConfigModal();
+            carregarVendas();
+        }
+
+        // =================================================================
+        // FORMATAÇÃO E MÁSCARAS
+        // =================================================================
+        function formatTitleCase(str) {
+            return (str || '').toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+        }
+
+        function getCorOperador(nome) {
+            const fixas = { "Leandro Silveira": "#1155cc", "Mirian Santos": "#a64d79" };
+            if (fixas[nome]) return fixas[nome];
+            let hash = 0;
+            for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+            let cor = '#';
+            for (let i = 0; i < 3; i++) {
+                let val = (hash >> (i * 8)) & 0xFF;
+                cor += ('00' + Math.max(0, Math.min(val, 170)).toString(16)).substr(-2);
+            }
+            return cor;
+        }
+
+        document.getElementById('valor').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            e.target.value = v ? (parseInt(v) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+        });
+
+        document.getElementById('km').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            e.target.value = v ? parseInt(v).toLocaleString('pt-BR') : "";
+        });
+
+        document.getElementById('cnpj').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "").slice(0, 14);
+            v = v.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
+            e.target.value = v;
+        });
+
+        document.getElementById('contato').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+            else if (v.length > 5) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+            e.target.value = v;
+        });
+
+        // =================================================================
+        // ENVIO PARA O GITHUB (API REST)
+        // =================================================================
+        document.getElementById('formVenda').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const owner = localStorage.getItem('gh_owner');
+            const repo = localStorage.getItem('gh_repo');
+            const token = localStorage.getItem('gh_token');
+            const operador = document.getElementById('operador').value.trim();
+
+            if (!owner || !repo || !token) {
+                alert("Configure o Dono, Repositório e Token no botão de engrenagem.");
+                toggleConfigModal();
+                return;
+            }
+
+            if (!operador) {
+                alert("Preencha seu nome de operador no topo da página antes de salvar.");
+                document.getElementById('operador').focus();
+                return;
+            }
+
+            const placaLimpa = document.getElementById('placa').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const timestamp = Date.now();
+            const filename = `vendas/${timestamp}_${placaLimpa}.json`;
+
+            const dadosVenda = {
+                id: timestamp,
+                status: "Pendente",
+                operador: formatTitleCase(operador),
+                transportadora: formatTitleCase(document.getElementById('transportadora').value),
+                placa: document.getElementById('placa').value.toUpperCase().trim(),
+                motorista: formatTitleCase(document.getElementById('motorista').value),
+                valor: document.getElementById('valor').value,
+                combustivel: document.getElementById('combustivel').value.toUpperCase().trim(),
+                litragem: document.getElementById('litragem').value.trim(),
+                km: document.getElementById('km').value.trim(),
+                cnpj: document.getElementById('cnpj').value.trim(),
+                contato: document.getElementById('contato').value.trim(),
+                dataHora: new Date().toLocaleString('pt-BR')
+            };
+
+            const btn = document.getElementById('btnSalvar');
+            const loader = document.getElementById('loaderEnvio');
+            const status = document.getElementById('statusEnvio');
+
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            loader.style.display = 'block';
+            status.className = 'hidden';
+
+            try {
+                // Converte payload para Base64 respeitando acentuação UTF-8
+                const jsonString = JSON.stringify(dadosVenda, null, 2);
+                const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filename}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Venda contingencia ${placaLimpa}`,
+                        content: base64Content
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || 'Falha ao gravar no GitHub');
+                }
+
+                status.textContent = "Gravado com sucesso no GitHub!";
+                status.className = "text-sm font-semibold text-emerald-600 block";
+                document.getElementById('formVenda').reset();
+                carregarVendas();
+            } catch (err) {
+                status.textContent = "Erro ao salvar: " + err.message;
+                status.className = "text-sm font-semibold text-rose-600 block";
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+                loader.style.display = 'none';
+                setTimeout(() => { status.className = 'hidden'; }, 4000);
+            }
+        });
+
+        // =================================================================
+        // CONSULTA DE REGISTROS
+        // =================================================================
+        async function carregarVendas() {
+            const owner = localStorage.getItem('gh_owner');
+            const repo = localStorage.getItem('gh_repo');
+            const token = localStorage.getItem('gh_token');
+            const tbody = document.getElementById('tabelaCorpo');
+
+            if (!owner || !repo || !token) return;
+
+            tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-500">Consultando registros no GitHub...</td></tr>`;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/vendas`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+
+                if (res.status === 404) {
+                    tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-400">Nenhuma venda registrada ainda.</td></tr>`;
+                    document.getElementById('contadorRegistros').textContent = `0 vendas`;
+                    return;
+                }
+
+                const files = await res.json();
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+
+                // Busca o conteúdo dos arquivos
+                const promises = jsonFiles.map(async file => {
+                    const r = await fetch(file.download_url);
+                    return await r.json();
+                });
+
+                vendasCarregadas = await Promise.all(promises);
+                vendasCarregadas.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+                document.getElementById('contadorRegistros').textContent = `${vendasCarregadas.length} vendas`;
+                renderTabela(vendasCarregadas);
+
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-rose-500">Erro ao carregar dados: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderTabela(lista) {
+            const tbody = document.getElementById('tabelaCorpo');
+            if (lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = lista.map((v, idx) => {
+                const corOp = getCorOperador(v.operador);
+                return `
+                    <tr class="hover:bg-slate-50 transition border-b">
+                        <td class="py-2.5 px-3"><span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">${v.status}</span></td>
+                        <td class="py-2.5 px-3 font-semibold" style="color: ${corOp}">${v.operador}</td>
+                        <td class="py-2.5 px-3 font-medium">${v.transportadora}</td>
+                        <td class="py-2.5 px-3 font-mono font-bold text-slate-800">${v.placa}</td>
+                        <td class="py-2.5 px-3 text-center">${v.motorista}</td>
+                        <td class="py-2.5 px-3 font-bold text-slate-900">R$ ${v.valor}</td>
+                        <td class="py-2.5 px-3">${v.combustivel || '-'}</td>
+                        <td class="py-2.5 px-3">${v.litragem || '-'}</td>
+                        <td class="py-2.5 px-3">${v.km || '-'}</td>
+                        <td class="py-2.5 px-3 font-mono text-[11px]">${v.cnpj || '-'}</td>
+                        <td class="py-2.5 px-3 text-slate-400 text-[11px]">${v.dataHora}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <button onclick="copiarTemplate(${idx})" class="text-blue-600 hover:text-blue-800 font-bold text-[11px] bg-blue-50 px-2 py-1 rounded">
+                                Copiar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // =================================================================
+        // COPIAR TEMPLATE PADRÃO
+        // =================================================================
+        function copiarTemplate(idx) {
+            const v = vendasCarregadas[idx];
+            const texto = 
+`🚨 REGISTRO DE VENDA (CONTINGÊNCIA) 🚨
+Operador: ${v.operador}
+Transportadora: ${v.transportadora}
+Placa: ${v.placa}
+Motorista: ${v.motorista}
+Valor: R$ ${v.valor}
+Combustível: ${v.combustivel || 'N/A'}
+Litragem: ${v.litragem || 'N/A'}
+KM: ${v.km || 'N/A'}
+CNPJ Posto: ${v.cnpj || 'N/A'}
+Contato: ${v.contato || 'N/A'}
+Data/Hora: ${v.dataHora}`;
+
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Template da placa " + v.placa + " copiado com sucesso!");
+            });
+        }
+
+        // =================================================================
+        // EXPORTAÇÃO EXCEL (.XLSX)
+        // =================================================================
+        function exportarExcel() {
+            if (vendasCarregadas.length === 0) {
+                alert("Não há dados carregados para exportar.");
+                return;
+            }
+
+            const rows = vendasCarregadas.map(v => ({
+                "Status": v.status,
+                "Operador": v.operador,
+                "Transportadora": v.transportadora,
+                "Placa do veículo": v.placa,
+                "Nome completo do motorista": v.motorista,
+                "Valor total": parseFloat(String(v.valor).replace(/\./g, '').replace(',', '.')) || 0,
+                "Tipo de combustível": v.combustivel,
+                "Litragem abastecida": parseFloat(String(v.litragem).replace(',', '.')) || 0,
+                "Quilometragem": parseFloat(String(v.km).replace(/\./g, '').replace(',', '.')) || 0,
+                "CNPJ do estabelecimento": v.cnpj,
+                "Contato p/ envio": v.contato,
+                "Data/Hora": v.dataHora
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+            XLSX.writeFile(wb, `Contingencia_CAC_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        }
+    </script>
+</body>
+</html>
